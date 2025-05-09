@@ -1,55 +1,3 @@
--- CONFIGURAÇÕES
-local keys = {
-    ["k3d8x"] = "2025-04-31",
-    ["b7n2a"] = "2025-04-31",
-    ["z1v6q"] = "2025-04-31",
-    ["w4p9m"] = "2025-04-30",
-    ["n8x0r"] = "2025-05-22",
-    ["e7t2f"] = "2025-05-01",
-    ["h5r9l"] = "2025-05-01",
-    ["a4m3d"] = "2025-05-01",
-    ["q2b7z"] = "2025-05-01",
-    ["u6j0c"] = "2025-05-01",
-    ["t9d1x"] = "2025-05-02",
-    ["p8f4e"] = "2025-05-02",
-    ["x1a9n"] = "2025-05-02",
-    ["m3v6b"] = "2025-05-02",
-    ["r0k5y"] = "2025-05-02",
-    ["j6n7p"] = "2025-05-03",
-    ["y8g2u"] = "2025-05-03",
-    ["c5x9t"] = "2025-05-03",
-    ["l7m1v"] = "2025-05-03",
-    ["f2z0a"] = "2025-05-03",
-    ["d4q6s"] = "2025-05-04",
-    ["g1k3o"] = "2025-05-04",
-    ["s9u8e"] = "2025-05-04",
-    ["v0n2i"] = "2025-05-04",
-    ["STAFF-ACCESS-92XJ7"] = "2030-05-04",
-}
-local usedHWIDs = {}
-
--- FUNÇÕES
-local function getHWID()
-    local id = game:GetService("RbxAnalyticsService"):GetClientId()
-    return id
-end
-
-local function isValidKey(inputKey)
-    local today = os.date("*t")
-    local keyDate = keys[inputKey]
-    if keyDate then
-        local y, m, d = keyDate:match("(%d+)-(%d+)-(%d+)")
-        local expTime = os.time({year=tonumber(y), month=tonumber(m), day=tonumber(d)})
-        return os.time(today) <= expTime
-    end
-    return false
-end
-
-local function isHWIDUsed(inputKey, hwid)
-    return usedHWIDs[inputKey] and usedHWIDs[inputKey] ~= hwid
-end
-
--- UI (mesma que você me mandou)
 local player = game.Players.LocalPlayer
 local gui = Instance.new("ScreenGui")
 gui.Name = "KeyInterface"
@@ -61,7 +9,10 @@ frame.Size = UDim2.new(0, 320, 0, 170)
 frame.Position = UDim2.new(0.5, -160, 0.5, -85)
 frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 frame.BorderSizePixel = 0
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
+
+local frameCorner = Instance.new("UICorner", frame)
+frameCorner.CornerRadius = UDim.new(0, 10)
+
 local frameStroke = Instance.new("UIStroke", frame)
 frameStroke.Color = Color3.fromRGB(80, 80, 80)
 frameStroke.Thickness = 2
@@ -75,7 +26,9 @@ textBox.TextColor3 = Color3.new(1, 1, 1)
 textBox.ClearTextOnFocus = false
 textBox.Font = Enum.Font.Gotham
 textBox.TextSize = 16
-Instance.new("UICorner", textBox).CornerRadius = UDim.new(0, 6)
+
+local textBoxCorner = Instance.new("UICorner", textBox)
+textBoxCorner.CornerRadius = UDim.new(0, 6)
 
 local submitButton = Instance.new("TextButton", frame)
 submitButton.Size = UDim2.new(0.85, 0, 0, 35)
@@ -85,7 +38,9 @@ submitButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 submitButton.TextColor3 = Color3.new(1, 1, 1)
 submitButton.Font = Enum.Font.GothamBold
 submitButton.TextSize = 16
-Instance.new("UICorner", submitButton).CornerRadius = UDim.new(0, 6)
+
+local buttonCorner = Instance.new("UICorner", submitButton)
+buttonCorner.CornerRadius = UDim.new(0, 6)
 
 local message = Instance.new("TextLabel", frame)
 message.Size = UDim2.new(1, 0, 0.2, 0)
@@ -95,22 +50,4 @@ message.TextColor3 = Color3.new(1, 1, 1)
 message.Text = ""
 message.Font = Enum.Font.Gotham
 message.TextSize = 14
-
--- VERIFICAÇÃO
-submitButton.MouseButton1Click:Connect(function()
-    local input = textBox.Text
-    local hwid = getHWID()
-    if isValidKey(input) then
-        if isHWIDUsed(input, hwid) then
-            message.Text = "Essa key já foi usada em outro dispositivo!"
-        else
-            usedHWIDs[input] = hwid
-            message.Text = "Key válida. Carregando menu..."
-            wait(1)
-            gui:Destroy()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/tveiz/Free/refs/heads/main/MiniHubFree"))()
-        end
-    else
-        message.Text = "Key inválida ou expirada."
-    end
-end)
+message.TextScaled = false
